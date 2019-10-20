@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group>
+        <item
+            android:id="@+id/nav_down"
+            android:icon="@drawable/ic_arrow_down"
+            android:title="Descargas"/>
+        <item
+            android:id="@+id/nav_up"
+            android:icon="@drawable/ic_arrow_up"
+            android:title="Cargas"/>
+    </group>
+
+    <item android:title="Ajustes">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_build"
+                android:title="Configuración"/>
+        </menu>
+    </item>
+</menu>
