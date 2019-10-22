@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
+import com.pcs.lean_logistica.adapter.DownloadAdapter
 import com.pcs.lean_logistica.model.Download
 import com.pcs.lean_logistica.tools.Utils
 import java.util.*
@@ -112,7 +113,7 @@ class DownloadFormFragment: Fragment() {
         val switch: Switch = view.findViewById(R.id.switch_download_type)
         switch.isChecked = (type=="SI")
 
-        switch.setOnCheckedChangeListener { buttonView, isChecked ->
+        switch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked)
                 textView.text = switch.textOn
             else
@@ -127,25 +128,37 @@ class DownloadFormFragment: Fragment() {
         val buttonEnd : MaterialButton = view.findViewById(R.id.btn_download_end)
 
         buttonStart.isEnabled = (start==null)
-        buttonEnd.isEnabled = (start!=null)
+        buttonEnd.isEnabled = (start!=null && end==null)
 
 
         buttonStart.setOnClickListener {
             if(!mainActivity.download.isValid()){
                 Utils.alert(context!!, "Debes rellenar todos los campos")
             }
-            else{
-                if(save()){
-                    buttonStart.isEnabled = false
-                    buttonEnd.isEnabled = true
-                }
+            else if(saveStart()){
+                buttonStart.isEnabled = false
+                buttonEnd.isEnabled = true
             }
         }
 
+        buttonEnd.setOnClickListener {
+            if(saveEnd()){
+                buttonEnd.isEnabled = false
+            }
+        }
     }
 
-    private fun save(): Boolean{
+    private fun saveStart(): Boolean{
+        mainActivity.download.start = Date()
+        mainActivity.download.position = mainActivity.listDownload.size
+        mainActivity.listDownload.add(mainActivity.download)
+        (mainActivity.currentAdapter as DownloadAdapter).update()
+        return true
+    }
 
+    private fun saveEnd(): Boolean{
+        mainActivity.listDownload[mainActivity.download.position].end = Date()
+        (mainActivity.currentAdapter as DownloadAdapter).update()
         return true
     }
 

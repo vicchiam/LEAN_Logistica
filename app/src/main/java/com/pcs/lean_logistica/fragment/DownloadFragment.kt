@@ -10,9 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
+import com.pcs.lean_logistica.adapter.DownloadAdapter
 import com.pcs.lean_logistica.model.Download
 import com.pcs.lean_logistica.tools.Utils
 import java.util.*
@@ -20,6 +23,10 @@ import java.util.*
 class DownloadFragment: Fragment() {
 
     private lateinit var mainActivity: MainActivity
+
+    private val adapter = DownloadAdapter()
+
+    private lateinit var recycler: RecyclerView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -36,6 +43,15 @@ class DownloadFragment: Fragment() {
         makeFloatingActionButton(view)
         makeSearchDate(view)
 
+        recycler = view.findViewById(R.id.recycler_download)
+        recycler.setHasFixedSize(true)
+        recycler.layoutManager = LinearLayoutManager(context)
+
+        adapter.DownloadAdapter(this, mainActivity.listDownload)
+        recycler.adapter = adapter
+        //adapter.search(Utils.dateToString(Date())){}
+
+        mainActivity.currentAdapter = adapter
         return view
     }
 
@@ -71,6 +87,7 @@ class DownloadFragment: Fragment() {
             DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                 val aux: String=dayOfMonth.toString().padStart(2,'0')+"/"+(monthOfYear+1).toString().padStart(2,'0')+"/"+year.toString()
                 editText.setText(aux)
+                adapter.search(aux){}
             }
         editText.onRightDrawableClicked {
             val cal = Calendar.getInstance()

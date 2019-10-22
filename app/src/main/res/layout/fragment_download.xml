@@ -20,8 +20,7 @@
             android:inputType="date"
             android:textColor="@color/colorPrimaryText"
             android:drawableRight="@drawable/ic_today"
-            android:padding="10dp"
-            android:layout_margin="5dp"
+            android:padding="15dp"
             android:background="@color/colorWhiteText"
             android:enabled="true"/>
 
@@ -29,6 +28,7 @@
             android:id="@+id/recycler_download"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="1dp"
             android:scrollbars="vertical"
             android:background="@color/colorSecondaryBackground"/>
 

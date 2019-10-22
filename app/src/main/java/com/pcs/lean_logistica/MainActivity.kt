@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Adapter
 import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.pcs.lean_logistica.fragment.DownloadFormFragment
 import com.pcs.lean_logistica.fragment.DownloadFragment
@@ -41,13 +43,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var currentFragment: Int = FRAGMENT_DOWN_LIST
     private var altCurrentFragment: Int = EMPTY_FRAGMENT
 
-    var cache: Cache = Cache(flushInterval = 5)
+    private lateinit var drawerLayout: DrawerLayout
 
     /**SHARE PARAMS*********************/
     lateinit var download: Download
-    lateinit var listDownload: List<Download>
+    lateinit var listDownload: MutableList<Download>
+    lateinit var currentAdapter: Any
 
-    private lateinit var drawerLayout: DrawerLayout
+    var cache: Cache = Cache(flushInterval = 5)
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +67,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         createID()
 
         initView()
+
+        listDownload = ArrayList()
 
     }
 
