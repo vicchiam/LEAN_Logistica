@@ -3,16 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="@dimen/layout_padding">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="App ID: " />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="000000"
+            android:id="@+id/app_id"/>
+
+    </LinearLayout>
 
     <Spinner
         android:id="@+id/spinner_center"
         style="@style/Widget.AppCompat.Spinner"
         android:layout_width="match_parent"
         android:layout_height="?attr/dropdownListPreferredItemHeight"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/textline"
         android:dropDownWidth="match_parent"
         android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
@@ -24,13 +42,10 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <EditText
-        android:id="@+id/edit_router"
+        android:id="@+id/edit_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="8dp"
         android:inputType="text"
         android:hint="URL del servidor" />
 
@@ -38,7 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
         android:padding="10dp"
         android:textColor="@android:color/white"
         android:id="@+id/btn_settings"

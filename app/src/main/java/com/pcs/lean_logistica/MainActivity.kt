@@ -5,29 +5,49 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.pcs.lean_logistica.fragment.DownloadFormFragment
+import com.pcs.lean_logistica.fragment.DownloadFragment
+import com.pcs.lean_logistica.fragment.SelectProviderFragment
 import com.pcs.lean_logistica.fragment.SettingFragment
+import com.pcs.lean_logistica.model.Download
+import com.pcs.lean_logistica.tools.Cache
+import com.pcs.lean_logistica.tools.Prefs
+import com.pcs.lean_logistica.tools.Utils
 
-const val TAG = "MAIN ACTIVITY"
+private const val TAG = "MAIN ACTIVITY"
 
 const val ACTION_BUTTON_MENU: Int = 0
 const val ACTION_BUTTON_ARROW: Int = 1
 
+const val EMPTY_FRAGMENT: Int = 0
 const val FRAGMENT_DOWN_LIST: Int = 1
 const val FRAGMENT_UP_LIST: Int  = 2
 const val FRAGMENT_SETTINGS: Int = 3
+const val FRAGMENT_DOWNLOAD_FORM: Int = 4
+const val FRAGMENT_SELECT_PROVIDER: Int = 5
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
-    private lateinit var drawerLayout: DrawerLayout
+    var idApp: Int = 0
 
     private var currentFragment: Int = FRAGMENT_DOWN_LIST
+    private var altCurrentFragment: Int = EMPTY_FRAGMENT
+
+    var cache: Cache = Cache(flushInterval = 5)
+
+    /**SHARE PARAMS*********************/
+    lateinit var download: Download
+    lateinit var listDownload: List<Download>
+
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,8 +59,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             false -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
 
+        createID()
+
         initView()
 
+    }
+
+    private fun createID(){
+        val prefs :Prefs = Prefs(this)
+        idApp = prefs.idApp
+        if(idApp==0){
+            idApp =  (1..1000000).shuffled().first()
+            prefs.idApp = idApp
+        }
+        Log.d("ID_APP", idApp.toString())
     }
 
     private fun initView(){
@@ -67,7 +99,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-
+            if(!Utils.isDoubleFragment(this)){
+                //Solo se dispone de un fragmento
+            }
+            else{
+                if(altCurrentFragment == FRAGMENT_SELECT_PROVIDER)
+                    navigateToNewDownload()
+            }
         }
     }
 
@@ -80,6 +118,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 navigateToUp()
             }
             R.id.nav_settings -> {
+                cleanFragment()
                 navigateToSettings()
             }
         }
@@ -95,6 +134,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         changeActionBarButton(ACTION_BUTTON_MENU)
         this.title = "Descargas"
         this.currentFragment = FRAGMENT_DOWN_LIST
+        navigateToFragment(DownloadFragment(), R.id.fragment_container1)
     }
 
     fun navigateToUp(){
@@ -110,6 +150,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigateToFragment(SettingFragment(), R.id.fragment_container1)
     }
 
+    fun navigateToNewDownload(){
+        if(!Utils.isDoubleFragment(this)){
+            //Solo se dispone de un fragmento
+        }
+        else{
+            this.altCurrentFragment = FRAGMENT_DOWNLOAD_FORM
+            navigateToFragment(DownloadFormFragment(), R.id.fragment_container2)
+        }
+    }
+
+    fun navigateToSelectProvider(){
+        if(!Utils.isDoubleFragment(this)){
+
+        }
+        else{
+            this.altCurrentFragment =  FRAGMENT_SELECT_PROVIDER
+            navigateToFragment(SelectProviderFragment(), R.id.fragment_container2)
+        }
+    }
+
+    private fun cleanFragment(){
+        if(Utils.isDoubleFragment(this)) {
+            val layout: LinearLayout = findViewById(R.id.fragment_container2)
+            layout.removeAllViews()
+        }
+    }
+
     private fun navigateToFragment(fragment: Fragment, @IdRes containerViewId: Int){
         val ft = supportFragmentManager
             .beginTransaction()
@@ -118,7 +185,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             ft.commit()
         }
     }
-
     private fun changeActionBarButton(type: Int){
         when(type){
             0 -> {
