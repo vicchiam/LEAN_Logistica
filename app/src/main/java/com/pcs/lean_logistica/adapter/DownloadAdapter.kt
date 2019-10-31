@@ -1,5 +1,6 @@
 package com.pcs.lean_logistica.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,10 +93,13 @@ class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filte
         private val textOperators: TextView =  view.findViewById(R.id.item_download_operators)
 
         fun bind(download: Download, downloadFragment: DownloadFragment){
+            Log.e("ADAPTER", download.toString())
             textProvider.text = "${download.provider} - ${download.name}"
             textStart.text = Utils.dateToString(download.start!!,"dd/MM/yyyy HH:mm")
             if(download.end!=null)
                 textEnd.text = Utils.dateToString(download.end!!, "dd/MM/yyyy HH:mm")
+            else
+                textEnd.text = "No Finalizada"
             if(download.pending)
                 relativeLayout.background =
                     downloadFragment.resources.getDrawable(
@@ -108,10 +112,10 @@ class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filte
                         android.R.color.white,
                         downloadFragment.context!!.theme
                     )
-            textOperators.text = "Operaios: ${download.operators}"
+            textOperators.text = "Operarios: ${download.operators}"
 
             itemView.setOnClickListener {
-
+                downloadFragment.editDownload(download)
             }
         }
 

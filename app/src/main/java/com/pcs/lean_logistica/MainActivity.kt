@@ -5,20 +5,16 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Adapter
 import android.widget.LinearLayout
 import androidx.annotation.IdRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
-import com.pcs.lean_logistica.fragment.DownloadFormFragment
-import com.pcs.lean_logistica.fragment.DownloadFragment
-import com.pcs.lean_logistica.fragment.SelectProviderFragment
-import com.pcs.lean_logistica.fragment.SettingFragment
+import com.pcs.lean_logistica.fragment.*
 import com.pcs.lean_logistica.model.Download
+import com.pcs.lean_logistica.model.Upload
 import com.pcs.lean_logistica.tools.Cache
 import com.pcs.lean_logistica.tools.Prefs
 import com.pcs.lean_logistica.tools.Utils
@@ -34,6 +30,7 @@ const val FRAGMENT_UP_LIST: Int  = 2
 const val FRAGMENT_SETTINGS: Int = 3
 const val FRAGMENT_DOWNLOAD_FORM: Int = 4
 const val FRAGMENT_SELECT_PROVIDER: Int = 5
+const val FRAGMENT_UPLOAD_FORM: Int = 6
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
@@ -48,6 +45,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     /**SHARE PARAMS*********************/
     lateinit var download: Download
     lateinit var listDownload: MutableList<Download>
+
+    lateinit var upload: Upload
+    lateinit var listUpload: MutableList<Upload>
+
     lateinit var currentAdapter: Any
 
     var cache: Cache = Cache(flushInterval = 5)
@@ -59,9 +60,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
 
         //ONLY PORTRAIT OR LANDSCAPE
-        when(resources.getBoolean(R.bool.portrait_only)){
-            true -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-            false -> requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        this.requestedOrientation = when(resources.getBoolean(R.bool.portrait_only)){
+            true -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            false -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         }
 
         createID()
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun createID(){
-        val prefs :Prefs = Prefs(this)
+        val prefs = Prefs(this)
         idApp = prefs.idApp
         if(idApp==0){
             idApp =  (1..1000000).shuffled().first()
@@ -125,32 +126,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 navigateToUp()
             }
             R.id.nav_settings -> {
-                cleanFragment()
                 navigateToSettings()
             }
         }
+        cleanFragment()
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
 
-    fun navigateToHome(){
+    private fun navigateToHome(){
         navigateToDown()
     }
 
-    fun navigateToDown(){
+    private fun navigateToDown(){
         changeActionBarButton(ACTION_BUTTON_MENU)
         this.title = "Descargas"
         this.currentFragment = FRAGMENT_DOWN_LIST
         navigateToFragment(DownloadFragment(), R.id.fragment_container1)
     }
 
-    fun navigateToUp(){
+    private fun navigateToUp(){
         changeActionBarButton(ACTION_BUTTON_MENU)
         this.title = "Cargas"
         this.currentFragment = FRAGMENT_UP_LIST
+        navigateToFragment(UploadFragment(), R.id.fragment_container1)
     }
 
-    fun navigateToSettings(){
+    private fun navigateToSettings(){
         changeActionBarButton(ACTION_BUTTON_MENU)
         this.title = "Configuración"
         this.currentFragment = FRAGMENT_SETTINGS
@@ -167,6 +169,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    fun navigateToNewUpload(){
+        if(!Utils.isDoubleFragment(this)){
+            //Solo se dispone de un fragmento
+        }
+        else{
+            this.altCurrentFragment = FRAGMENT_UPLOAD_FORM
+            navigateToFragment(UploadFormFragment(), R.id.fragment_container2)
+        }
+    }
+
     fun navigateToSelectProvider(){
         if(!Utils.isDoubleFragment(this)){
 
@@ -177,7 +189,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    private fun cleanFragment(){
+    fun cleanFragment(){
         if(Utils.isDoubleFragment(this)) {
             val layout: LinearLayout = findViewById(R.id.fragment_container2)
             layout.removeAllViews()
@@ -194,12 +206,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
     private fun changeActionBarButton(type: Int){
         when(type){
-            0 -> {
-                supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu)
-            }
-            1 -> {
-                supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
-            }
+            0 -> supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_menu)
+            1 -> supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_arrow_back)
         }
 
     }

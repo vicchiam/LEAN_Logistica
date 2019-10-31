@@ -6,6 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.pcs.lean_logistica.R
 import kotlinx.android.synthetic.main.fragment_container.view.*
@@ -46,7 +47,8 @@ class Utils {
         }
 
         inline fun <reified T> fromJson(jsonString: String): T{
-            return Gson().fromJson<T>(jsonString, object : TypeToken<T>() {}.type)
+            val gson: Gson = GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create()
+            return gson.fromJson<T>(jsonString, object : TypeToken<T>() {}.type)
         }
 
         fun alert(context: Context, message: String, title: String = "Advertencia"){

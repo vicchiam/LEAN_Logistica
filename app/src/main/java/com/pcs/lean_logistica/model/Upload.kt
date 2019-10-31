@@ -4,22 +4,19 @@ import com.google.gson.annotations.SerializedName
 import com.pcs.lean_logistica.tools.Utils
 import java.util.*
 
-data class Download(
+data class Upload(
     @SerializedName("position") var position: Int = 0,
     @SerializedName("id") var id: Long = 0,
-    @SerializedName("provider") var provider: Int = 0,
-    @SerializedName("name") var name: String = "",
     @SerializedName("operators") var operators: Int = 1,
-    @SerializedName("type") var type: Int = 1,
+    @SerializedName("pallets") var pallets: Int = 0,
     @SerializedName("start") var start: Date? = null,
     @SerializedName("end") var end: Date? = null
 ){
-
     val pending: Boolean
         get() = (start!=null && end==null)
 
     fun isValid(): Boolean{
-        return (name.isNotEmpty() && operators>0)
+        return (pallets>0 && operators>0)
     }
 
     fun getSearchCriteria(): String{
@@ -27,5 +24,4 @@ data class Download(
             return "";
         return Utils.dateToString(start!!)
     }
-
 }
