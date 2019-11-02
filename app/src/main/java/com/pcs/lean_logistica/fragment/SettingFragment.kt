@@ -10,7 +10,6 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.snackbar.Snackbar
 import com.pcs.lean_logistica.R
 import com.pcs.lean_logistica.tools.Prefs
 import com.pcs.lean_logistica.tools.Utils
@@ -32,7 +31,7 @@ class SettingFragment : Fragment(){
         prefs = Prefs(this.context!!)
 
         val textView: TextView = view.findViewById(R.id.app_id)
-        textView.text = prefs!!.idApp.toString()
+        textView.text = prefs.idApp.toString()
 
         val data = resources.getStringArray(R.array.centers)
         val adapter = ArrayAdapter(context!!, R.layout.spinner_item_selected, data)
@@ -40,12 +39,12 @@ class SettingFragment : Fragment(){
         spinner = view.findViewById(R.id.spinner_center)
         spinner.adapter = adapter
 
-        val url = prefs!!.settingsUrl
+        val url = prefs.settingsUrl
         editUrl = view.findViewById(R.id.edit_url)
         editUrl.setText(url)
 
-        var button: MaterialButton = view.findViewById(R.id.btn_settings)
-        button.setOnClickListener { _ ->
+        val button: MaterialButton = view.findViewById(R.id.btn_settings)
+        button.setOnClickListener {
             save()
         }
 
@@ -63,10 +62,10 @@ class SettingFragment : Fragment(){
     private fun save(){
         if(isValid()){
             val position: Int = spinner.selectedItemPosition
-            prefs!!.settingsCenter = position
+            prefs.settingsCenter = position
 
             val url = editUrl.text.toString()
-            prefs!!.settingsUrl = url
+            prefs.settingsUrl = url
             Utils.alert(context!!, "Guardado correctamente")
         }
     }

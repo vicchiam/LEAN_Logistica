@@ -9,7 +9,6 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.pcs.lean_logistica.R
-import kotlinx.android.synthetic.main.fragment_container.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -31,7 +30,7 @@ class Utils {
         }
 
         fun dateToString(date: Date, pattern: String = "dd/MM/yyyy" ): String{
-            val format = SimpleDateFormat(pattern)
+            val format = SimpleDateFormat(pattern, Locale.getDefault())
             return format.format(date)
         }
 
@@ -43,7 +42,6 @@ class Utils {
 
         fun isDoubleFragment(context: Context): Boolean{
             return context.resources.getIdentifier("fragment_container2", "id", context.packageName)!=0
-            return false
         }
 
         inline fun <reified T> fromJson(jsonString: String): T{

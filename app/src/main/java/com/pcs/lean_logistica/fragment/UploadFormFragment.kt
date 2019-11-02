@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.button.MaterialButton
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
+import com.pcs.lean_logistica.adapter.UploadAdapter
 import com.pcs.lean_logistica.model.Upload
 import com.pcs.lean_logistica.tools.Prefs
 import com.pcs.lean_logistica.tools.Router
@@ -41,12 +42,36 @@ class UploadFormFragment: Fragment() {
         val upload: Upload = mainActivity.upload
 
         val readOnly: Boolean = (upload.start!=null)
+        val readOnlyEnd: Boolean = (upload.end!=null)
 
+        makeEditTextDock(view, upload.dock, readOnly)
         makeEditTextOperator(view, upload.operators, readOnly)
-        makeEditTextPallets(view, upload.pallets, readOnly)
+
+
+        makeEditTextPallets(view, upload.pallets, readOnlyEnd)
         makeButtons(view, upload.start , upload.end)
 
         return view
+    }
+
+    private fun makeEditTextDock(view: View, num: Int, readOnly: Boolean){
+        val editText: EditText = view.findViewById(R.id.edit_dock)
+        editText.isEnabled=!readOnly
+
+        val textNum= if(num>0) num.toString() else ""
+
+        editText.setText(textNum)
+        editText.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.toString().isNotEmpty())
+                    mainActivity.upload.dock = s.toString().toInt()
+            }
+        })
     }
 
     private fun makeEditTextOperator(view: View, num: Int, readOnly: Boolean){
@@ -82,7 +107,7 @@ class UploadFormFragment: Fragment() {
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 if(s.toString().isNotEmpty())
-                    mainActivity.upload.operators = s.toString().toInt()
+                    mainActivity.upload.pallets = s.toString().toInt()
             }
         })
     }
@@ -118,6 +143,7 @@ class UploadFormFragment: Fragment() {
         params["action"]="add-upload"
         params["center"]=center.toString()
         params["id_device"]=mainActivity.idApp.toString()
+        params["dock"]=mainActivity.upload.dock.toString()
         params["operators"]=mainActivity.upload.operators.toString()
         params["pallets"]=mainActivity.upload.operators.toString()
         params["start"]=Utils.dateToString(mainActivity.upload.start!!, "yyyy-MM-dd HH:mm:ss")
@@ -160,7 +186,7 @@ class UploadFormFragment: Fragment() {
 
         mainActivity.upload.position = mainActivity.listUpload.size
         mainActivity.listUpload.add(mainActivity.upload)
-        //(mainActivity.currentAdapter as DownloadAdapter).update()
+        (mainActivity.currentAdapter as UploadAdapter).update()
         mainActivity.cleanFragment()
     }
 
@@ -183,7 +209,7 @@ class UploadFormFragment: Fragment() {
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=end-upload&id=${mainActivity.upload.id}",
+                params = "action=end-upload&id=${mainActivity.upload.id}&pallets=${mainActivity.upload.pallets}",
                 responseListener = { response ->
                     if (context != null){
                         if (response=="ok")
@@ -205,7 +231,7 @@ class UploadFormFragment: Fragment() {
 
     private fun saveEndOk(){
         buttonEnd.isEnabled = false
-        //(mainActivity.currentAdapter as DownloadAdapter).update()
+        (mainActivity.currentAdapter as UploadAdapter).update()
         mainActivity.cleanFragment()
     }
 

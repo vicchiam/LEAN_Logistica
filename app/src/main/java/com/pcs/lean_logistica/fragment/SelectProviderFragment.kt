@@ -16,12 +16,10 @@ import com.google.gson.JsonSyntaxException
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
 import com.pcs.lean_logistica.adapter.SelectProviderAdapter
-import com.pcs.lean_logistica.model.Download
 import com.pcs.lean_logistica.model.Provider
 import com.pcs.lean_logistica.tools.Prefs
 import com.pcs.lean_logistica.tools.Router
 import com.pcs.lean_logistica.tools.Utils
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG: String = "SELECT_PROV_FRAGMENT"
@@ -48,7 +46,7 @@ class SelectProviderFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_select_provider, container, false)
 
         val imageButton: ImageButton = view.findViewById(R.id.btn_back_select_provider)
-        imageButton.setOnClickListener { _ ->
+        imageButton.setOnClickListener {
             mainActivity.navigateToNewDownload()
         }
 
@@ -73,7 +71,7 @@ class SelectProviderFragment: Fragment() {
             getAvailablePurchaseOrders()
         }
         else {
-            adapter.SelectProviderAdapter(this, (mainActivity.cache.get("providers") as MutableList<Provider>))
+            adapter.selectProviderAdapter(this, (mainActivity.cache.get("providers") as MutableList<Provider>))
             recycler.adapter = adapter
         }
 
@@ -100,7 +98,7 @@ class SelectProviderFragment: Fragment() {
                             val list: List<Provider> = Utils.fromJson(response)
                             val mutableList = list.toMutableList()
                             mainActivity.cache.set("providers", mutableList)
-                            adapter.SelectProviderAdapter(this, mutableList)
+                            adapter.selectProviderAdapter(this, mutableList)
                             recycler.adapter = adapter
                         }
                         catch (ex: JsonSyntaxException){
@@ -138,14 +136,13 @@ class SelectProviderFragment: Fragment() {
             val quantities: List<String> = provider.quantities.split(";")
             val unds: List<String> = provider.unds.split(";")
             var msj="";
-            for(i in 0 until articles.size){
-                Log.d(TAG, i.toString())
+            for(i in articles.indices){
                 msj+="${articles[i]}  -  ${descriptions[i]}  -  ${quantities[i]} ${unds[i]} \n"
             }
             Utils.alert(context!!, msj, "Articulos Previstos")
         }
         catch (e: Exception){
-            Log.e(TAG, e.message)
+            Log.e(TAG, e.message!!)
         }
     }
 

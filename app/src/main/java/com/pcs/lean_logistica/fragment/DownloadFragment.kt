@@ -3,7 +3,6 @@ package com.pcs.lean_logistica.fragment
 import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -51,14 +50,14 @@ class DownloadFragment: Fragment() {
         recycler.setHasFixedSize(true)
         recycler.layoutManager = LinearLayoutManager(context)
 
-        adapter.DownloadAdapter(this, mainActivity.listDownload)
+        adapter.downloadAdapter(this, mainActivity.listDownload)
         recycler.adapter = adapter
 
         if(mainActivity.listDownload.isEmpty()){
             getDownloads()
         }
         else{
-            adapter.DownloadAdapter(this, mainActivity.listDownload)
+            adapter.downloadAdapter(this, mainActivity.listDownload)
             recycler.adapter = adapter
         }
         adapter.search(Utils.dateToString(currentDate)){}
@@ -69,7 +68,7 @@ class DownloadFragment: Fragment() {
 
     private fun makeFloatingActionButton(view: View){
         val actionButton: FloatingActionButton = view.findViewById(R.id.fab_download)
-        actionButton.setOnClickListener { _ ->
+        actionButton.setOnClickListener {
             mainActivity.download = Download()
             mainActivity.navigateToNewDownload()
         }
@@ -128,7 +127,7 @@ class DownloadFragment: Fragment() {
                     if(context!=null){
                         val list: List<Download> = Utils.fromJson(response)
                         mainActivity.listDownload = list.toMutableList()
-                        adapter.DownloadAdapter(this, mainActivity.listDownload)
+                        adapter.downloadAdapter(this, mainActivity.listDownload)
                         recycler.adapter = adapter
                         adapter.search(Utils.dateToString(currentDate)){}
                     }

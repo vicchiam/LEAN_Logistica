@@ -24,7 +24,7 @@ data class Download(
 
     fun getSearchCriteria(): String{
         if(start==null)
-            return "";
+            return ""
         return Utils.dateToString(start!!)
     }
 

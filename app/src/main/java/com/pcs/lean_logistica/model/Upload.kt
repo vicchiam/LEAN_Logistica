@@ -7,6 +7,7 @@ import java.util.*
 data class Upload(
     @SerializedName("position") var position: Int = 0,
     @SerializedName("id") var id: Long = 0,
+    @SerializedName("dock") var dock: Int = 0,
     @SerializedName("operators") var operators: Int = 1,
     @SerializedName("pallets") var pallets: Int = 0,
     @SerializedName("start") var start: Date? = null,
@@ -16,12 +17,12 @@ data class Upload(
         get() = (start!=null && end==null)
 
     fun isValid(): Boolean{
-        return (pallets>0 && operators>0)
+        return (dock>0 && pallets>0 && operators>0)
     }
 
     fun getSearchCriteria(): String{
         if(start==null)
-            return "";
+            return ""
         return Utils.dateToString(start!!)
     }
 }

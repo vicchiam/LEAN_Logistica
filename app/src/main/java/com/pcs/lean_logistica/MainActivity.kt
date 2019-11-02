@@ -19,8 +19,6 @@ import com.pcs.lean_logistica.tools.Cache
 import com.pcs.lean_logistica.tools.Prefs
 import com.pcs.lean_logistica.tools.Utils
 
-private const val TAG = "MAIN ACTIVITY"
-
 const val ACTION_BUTTON_MENU: Int = 0
 const val ACTION_BUTTON_ARROW: Int = 1
 
@@ -70,6 +68,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initView()
 
         listDownload = ArrayList()
+        listUpload = ArrayList()
 
     }
 

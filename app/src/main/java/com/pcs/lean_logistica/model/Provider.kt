@@ -17,7 +17,7 @@ data class Provider(
 ){
 
     fun getSearchCriteria(): String{
-        return "$code $name".toLowerCase()
+        return "$code $name".toLowerCase(Locale.getDefault())
     }
 
 }

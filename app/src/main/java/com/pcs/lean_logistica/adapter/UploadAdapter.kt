@@ -9,33 +9,33 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pcs.lean_logistica.R
-import com.pcs.lean_logistica.fragment.DownloadFragment
-import com.pcs.lean_logistica.model.Download
+import com.pcs.lean_logistica.fragment.UploadFragment
+import com.pcs.lean_logistica.model.Upload
 import com.pcs.lean_logistica.tools.Utils
 
-class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filterable {
+class UploadAdapter: RecyclerView.Adapter<UploadAdapter.ViewHolder>(), Filterable {
 
-    private lateinit var downloadFragment: DownloadFragment
+    private lateinit var uploadFragment: UploadFragment
 
-    private lateinit var originalList: List<Download>
-    private lateinit var showList: MutableList<Download>
+    private lateinit var originalList: List<Upload>
+    private lateinit var showList: MutableList<Upload>
 
     private var lastSearch: String? = ""
 
-    fun downloadAdapter(downloadFragment: DownloadFragment, list: MutableList<Download>){
-        this.downloadFragment = downloadFragment
+    fun uploadAdapter(uploadFragment: UploadFragment, list: MutableList<Upload>){
+        this.uploadFragment = uploadFragment
         this.originalList = list
         this.showList = ArrayList(list)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item: Download = this.showList[position]
-        holder.bind(item, downloadFragment)
+        val item: Upload = this.showList[position]
+        holder.bind(item, uploadFragment)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return ViewHolder(layoutInflater.inflate(R.layout.item_download, parent, false))
+        return ViewHolder(layoutInflater.inflate(R.layout.item_upload, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -82,38 +82,44 @@ class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filte
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val relativeLayout: RelativeLayout = view.findViewById(R.id.item_download)
+        private val relativeLayout: RelativeLayout = view.findViewById(R.id.item_upload)
 
-        private val textProvider: TextView =  view.findViewById(R.id.item_download_provider)
-        private val textStart: TextView =  view.findViewById(R.id.item_download_start)
-        private val textEnd: TextView =  view.findViewById(R.id.item_download_end)
-        private val textOperators: TextView =  view.findViewById(R.id.item_download_operators)
+        private val textDock: TextView =  view.findViewById(R.id.item_upload_dock)
+        private val textOperators: TextView =  view.findViewById(R.id.item_upload_operators)
+        private val textPallets: TextView =  view.findViewById(R.id.item_upload_pallets)
+        private val textStart: TextView =  view.findViewById(R.id.item_upload_start)
+        private val textEnd: TextView =  view.findViewById(R.id.item_upload_end)
 
-        fun bind(download: Download, downloadFragment: DownloadFragment){
-            val providerText = "${download.provider} - ${download.name}"
-            textProvider.text = providerText
-            textStart.text = Utils.dateToString(download.start!!,"dd/MM/yyyy HH:mm")
-            if(download.end!=null)
-                textEnd.text = Utils.dateToString(download.end!!, "dd/MM/yyyy HH:mm")
+
+        fun bind(upload: Upload, uploadFragment: UploadFragment){
+            val dockText = "Muelle de carga ${upload.dock}"
+            textDock.text = dockText
+
+            val palletsText = "Palets: ${upload.pallets}"
+            textPallets.text = palletsText
+            textStart.text = Utils.dateToString(upload.start!!,"dd/MM/yyyy HH:mm")
+            if(upload.end!=null)
+                textEnd.text = Utils.dateToString(upload.end!!, "dd/MM/yyyy HH:mm")
             else
                 textEnd.text = "No Finalizada"
-            if(download.pending)
+            if(upload.pending)
                 relativeLayout.background =
-                    downloadFragment.resources.getDrawable(
+                    uploadFragment.resources.getDrawable(
                         android.R.color.holo_green_light,
-                        downloadFragment.context!!.theme
+                        uploadFragment.context!!.theme
                     )
             else
                 relativeLayout.background =
-                    downloadFragment.resources.getDrawable(
+                    uploadFragment.resources.getDrawable(
                         android.R.color.white,
-                        downloadFragment.context!!.theme
+                        uploadFragment.context!!.theme
                     )
-            val operatorText = "Operarios: ${download.operators}"
-            textOperators.text = operatorText
+
+            val operationsText = "Operarios: ${upload.operators}"
+            textOperators.text = operationsText
 
             itemView.setOnClickListener {
-                downloadFragment.editDownload(download)
+                uploadFragment.editUpload(upload)
             }
         }
 

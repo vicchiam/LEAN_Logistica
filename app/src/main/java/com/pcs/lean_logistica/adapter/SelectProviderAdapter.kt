@@ -19,7 +19,7 @@ class SelectProviderAdapter: RecyclerView.Adapter<SelectProviderAdapter.ViewHold
     private lateinit var originalList: List<Provider>
     private lateinit var showList: MutableList<Provider>
 
-    fun SelectProviderAdapter(selectProviderFragment: SelectProviderFragment, list: MutableList<Provider>){
+    fun selectProviderAdapter(selectProviderFragment: SelectProviderFragment, list: MutableList<Provider>){
         this.selectProviderFragment = selectProviderFragment
         this.originalList = list
         this.showList = ArrayList(list)

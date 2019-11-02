@@ -24,15 +24,13 @@
             android:background="@color/colorWhiteText"
             android:enabled="true"/>
 
-        <!--
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_download"
+            android:id="@+id/recycler_upload"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="1dp"
             android:scrollbars="vertical"
             android:background="@color/colorSecondaryBackground"/>
-        -->
 
     </LinearLayout>
 

@@ -9,17 +9,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
-import com.pcs.lean_logistica.model.Download
+import com.pcs.lean_logistica.adapter.UploadAdapter
 import com.pcs.lean_logistica.model.Upload
+import com.pcs.lean_logistica.tools.Prefs
+import com.pcs.lean_logistica.tools.Router
 import com.pcs.lean_logistica.tools.Utils
 import java.util.*
 
 class UploadFragment: Fragment() {
 
     private lateinit var mainActivity: MainActivity
+
+    private val adapter = UploadAdapter()
+
+    private lateinit var recycler: RecyclerView
 
     private var currentDate: Date = Date()
 
@@ -38,12 +46,30 @@ class UploadFragment: Fragment() {
         makeFloatingActionButton(view)
         makeSearchDate(view)
 
+        recycler = view.findViewById(R.id.recycler_upload)
+        recycler.setHasFixedSize(true)
+        recycler.layoutManager = LinearLayoutManager(context)
+
+        adapter.uploadAdapter(this, mainActivity.listUpload)
+        recycler.adapter = adapter
+
+        if(mainActivity.listUpload.isEmpty()){
+            getUploads()
+        }
+        else{
+            adapter.uploadAdapter(this, mainActivity.listUpload)
+            recycler.adapter = adapter
+        }
+        adapter.search(Utils.dateToString(currentDate)){}
+
+        mainActivity.currentAdapter = adapter
+
         return view
     }
 
     private fun makeFloatingActionButton(view: View){
         val actionButton: FloatingActionButton = view.findViewById(R.id.fab_upload)
-        actionButton.setOnClickListener { _ ->
+        actionButton.setOnClickListener {
             mainActivity.upload = Upload()
             mainActivity.navigateToNewUpload()
         }
@@ -85,6 +111,42 @@ class UploadFragment: Fragment() {
                 cal.get(Calendar.MONTH),
                 cal.get(Calendar.DAY_OF_MONTH)).show()
         }
+    }
+
+    private fun getUploads(){
+        val prefs = Prefs(mainActivity)
+        val url: String = prefs.settingsUrl
+
+        if(url.isNotEmpty()){
+            val dialog = Utils.modalAlert(mainActivity, "Guardando")
+            dialog.show()
+            Router.get(
+                context = context!!,
+                url = url,
+                params = "action=get-uploads",
+                responseListener = { response ->
+                    if(context!=null){
+                        val list: List<Upload> = Utils.fromJson(response)
+                        mainActivity.listUpload = list.toMutableList()
+                        adapter.uploadAdapter(this, mainActivity.listUpload)
+                        recycler.adapter = adapter
+                        adapter.search(Utils.dateToString(currentDate)){}
+                    }
+                    dialog.dismiss()
+                },
+                errorListener = { err ->
+                    if(context!=null){
+                        Utils.alert(context!!, err)
+                        dialog.dismiss()
+                    }
+                }
+            )
+        }
+    }
+
+    fun editUpload(upload: Upload){
+        mainActivity.upload = upload
+        mainActivity.navigateToNewUpload()
     }
 
 }
