@@ -91,7 +91,7 @@ class SelectProviderFragment: Fragment() {
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=get-providers&centro=$center&fecha=$today",
+                params = "action=get-providers&center=$center&date=$today",
                 responseListener = { response ->
                     if(context!=null) {
                         try{
@@ -103,6 +103,9 @@ class SelectProviderFragment: Fragment() {
                         }
                         catch (ex: JsonSyntaxException){
                             Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                        }
+                        catch (ex: Exception){
+                            Utils.alert(context!!,ex.toString())
                         }
                         finally {
                             dialog.dismiss()

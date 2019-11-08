@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorPrimaryText"
-        android:textSize="16sp"
+        android:textSize="16dp"
         android:text="Muelle de carga" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorSecondaryText"
         android:layout_alignParentRight="true"
-        android:textSize="16sp"
+        android:textSize="16dp"
         android:text="Palets: 1" />
 
     <TextView

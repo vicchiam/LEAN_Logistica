@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.JsonSyntaxException
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
 import com.pcs.lean_logistica.adapter.UploadAdapter
@@ -118,21 +119,33 @@ class UploadFragment: Fragment() {
         val url: String = prefs.settingsUrl
 
         if(url.isNotEmpty()){
-            val dialog = Utils.modalAlert(mainActivity, "Guardando")
+            val dialog = Utils.modalAlert(mainActivity)
             dialog.show()
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=get-uploads",
+                params = "action=get-uploads&id_device=${mainActivity.idApp}",
                 responseListener = { response ->
                     if(context!=null){
-                        val list: List<Upload> = Utils.fromJson(response)
-                        mainActivity.listUpload = list.toMutableList()
-                        adapter.uploadAdapter(this, mainActivity.listUpload)
-                        recycler.adapter = adapter
-                        adapter.search(Utils.dateToString(currentDate)){}
+                        try{
+                            val list: List<Upload> = Utils.fromJson(response)
+                            mainActivity.listUpload = list.toMutableList()
+                            adapter.uploadAdapter(this, mainActivity.listUpload)
+                            recycler.adapter = adapter
+                            adapter.search(Utils.dateToString(currentDate)){}
+                        }
+                        catch (ex: JsonSyntaxException){
+                            Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                        }
+                        catch (ex: Exception){
+                            Utils.alert(context!!,ex.toString())
+                        }
+                        finally {
+                            dialog.dismiss()
+                        }
                     }
-                    dialog.dismiss()
+                    else
+                        dialog.dismiss()
                 },
                 errorListener = { err ->
                     if(context!=null){

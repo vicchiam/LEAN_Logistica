@@ -20,7 +20,7 @@
             android:inputType="date"
             android:textColor="@color/colorPrimaryText"
             android:drawableRight="@drawable/ic_today"
-            android:padding="19dp"
+            android:padding="16dp"
             android:background="@color/colorWhiteText"
             android:enabled="true"/>
 

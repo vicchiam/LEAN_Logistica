@@ -14,15 +14,12 @@ class Router {
 
         fun get(context: Context, url: String, params: String, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
             val finalUrl = if(params.isEmpty()) url else "$url?$params"
-
-            Log.d(TAG, finalUrl)
-
             val queue = Volley.newRequestQueue(context)
             val request = StringRequest(
                 Request.Method.GET,
                 finalUrl,
                 Response.Listener<String> { response ->
-                    Log.d("RESPONSE", response)
+                    Log.e("RESPONSE", response)
                     responseListener(response)
                 },
                 Response.ErrorListener { err ->
@@ -34,13 +31,12 @@ class Router {
         }
 
         fun post(context: Context, url: String, params: HashMap<String, String>, responseListener: (String) -> Unit, errorListener: (String) -> Unit){
-            Log.d(TAG, url)
-
             val queue = Volley.newRequestQueue(context)
             val request = object: StringRequest(
                 Method.POST,
                 url,
                 Response.Listener<String> { response ->
+                    Log.e("RESPONSE", response)
                     responseListener(response)
                 },
                 Response.ErrorListener { err ->

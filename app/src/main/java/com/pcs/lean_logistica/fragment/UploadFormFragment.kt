@@ -121,14 +121,17 @@ class UploadFormFragment: Fragment() {
 
 
         buttonStart.setOnClickListener {
-            if(!mainActivity.upload.isValid())
+            if(!mainActivity.upload.isValidStart())
                 Utils.alert(context!!, "Debes rellenar todos los campos")
             else
                 saveStart()
         }
 
         buttonEnd.setOnClickListener {
-            saveEnd()
+            if(!mainActivity.upload.isValidEnd())
+                Utils.alert(context!!, "Debes indicar el numero de pallets")
+            else
+                saveEnd()
         }
     }
 
@@ -145,12 +148,17 @@ class UploadFormFragment: Fragment() {
         params["id_device"]=mainActivity.idApp.toString()
         params["dock"]=mainActivity.upload.dock.toString()
         params["operators"]=mainActivity.upload.operators.toString()
-        params["pallets"]=mainActivity.upload.operators.toString()
+        params["pallets"]=mainActivity.upload.pallets.toString()
         params["start"]=Utils.dateToString(mainActivity.upload.start!!, "yyyy-MM-dd HH:mm:ss")
         if(mainActivity.upload.end!=null)
             params["end"]=Utils.dateToString(mainActivity.upload.end!!, "yyyy-MM-dd HH:mm:ss")
         else
             params["end"]=""
+
+        if(mainActivity.upload.dockInUse(mainActivity.listUpload)){
+            Utils.alert(context!!, "El muelle ya esta en uso")
+            return
+        }
 
         if(url.isNotEmpty()){
             val dialog = Utils.modalAlert(mainActivity, "Guardando")

@@ -16,13 +16,25 @@ data class Upload(
     val pending: Boolean
         get() = (start!=null && end==null)
 
-    fun isValid(): Boolean{
-        return (dock>0 && pallets>0 && operators>0)
+    fun isValidStart(): Boolean{
+        return (dock>0 && operators>0)
+    }
+
+    fun isValidEnd(): Boolean{
+        return (pallets>0)
     }
 
     fun getSearchCriteria(): String{
         if(start==null)
             return ""
         return Utils.dateToString(start!!)
+    }
+
+    fun dockInUse(list: List<Upload>): Boolean{
+        list.forEach{
+            if(it.dock==this.dock)
+                return true
+        }
+        return false
     }
 }

@@ -1,8 +1,10 @@
 package com.pcs.lean_logistica.fragment
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.gson.JsonSyntaxException
 import com.pcs.lean_logistica.MainActivity
 import com.pcs.lean_logistica.R
 import com.pcs.lean_logistica.adapter.DownloadAdapter
@@ -31,9 +34,18 @@ class DownloadFragment: Fragment() {
 
     private var currentDate: Date = Date()
 
+    private lateinit var dialog: Dialog //Es el fragmento de entrada y puede dar error al abrir en portrait y canviar a landscape
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(dialog.isShowing)
+            dialog.dismiss()
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity = activity as MainActivity
+        dialog = Utils.modalAlert(mainActivity)
     }
 
     override fun onCreateView(
@@ -117,21 +129,33 @@ class DownloadFragment: Fragment() {
         val url: String = prefs.settingsUrl
 
         if(url.isNotEmpty()){
-            val dialog = Utils.modalAlert(mainActivity, "Guardando")
             dialog.show()
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=get-downloads",
+                params = "action=get-downloads&id_device=${mainActivity.idApp}",
                 responseListener = { response ->
                     if(context!=null){
-                        val list: List<Download> = Utils.fromJson(response)
-                        mainActivity.listDownload = list.toMutableList()
-                        adapter.downloadAdapter(this, mainActivity.listDownload)
-                        recycler.adapter = adapter
-                        adapter.search(Utils.dateToString(currentDate)){}
+                        try {
+                            val list: List<Download> = Utils.fromJson(response)
+                            mainActivity.listDownload = list.toMutableList()
+                            adapter.downloadAdapter(this, mainActivity.listDownload)
+                            recycler.adapter = adapter
+                            adapter.search(Utils.dateToString(currentDate)) {}
+                        }
+                        catch (ex: JsonSyntaxException){
+                            Utils.alert(context!!,"El formato de la respuesta no es correcto: $response")
+                        }
+                        catch (ex: Exception){
+                            Utils.alert(context!!,ex.toString())
+                        }
+                        finally {
+                            dialog.dismiss()
+                        }
                     }
-                    dialog.dismiss()
+                    else{
+                        Log.e("No Context","AAAAAAAAAAAA")
+                    }
                 },
                 errorListener = { err ->
                     if(context!=null){

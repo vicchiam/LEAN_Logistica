@@ -51,8 +51,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     var cache: Cache = Cache(flushInterval = 5)
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -119,9 +117,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_down -> {
+                this.listDownload.clear() //Obligo a recargarse
                 navigateToDown()
             }
             R.id.nav_up -> {
+                this.listUpload.clear() //Obligo a recargarse
                 navigateToUp()
             }
             R.id.nav_settings -> {

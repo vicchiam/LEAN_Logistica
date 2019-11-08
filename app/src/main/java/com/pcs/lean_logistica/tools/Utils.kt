@@ -61,7 +61,7 @@ class Utils {
 
         fun modalAlert(activity: AppCompatActivity, message: String = "Cargando..."): AlertDialog{
             val builder = AlertDialog.Builder(activity)
-            val dialogView = activity.layoutInflater.inflate(R.layout.progress_dialog, null)
+            val dialogView =  activity.layoutInflater.inflate(R.layout.progress_dialog, null)
             val messageTextView = dialogView.findViewById<TextView>(R.id.message)
             messageTextView.text = message
             builder.setView(dialogView)
