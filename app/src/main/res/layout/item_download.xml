@@ -19,6 +19,15 @@
         android:text="12345 - Adinas tremens currelens" />
 
     <TextView
+        android:id="@+id/item_download_pallets"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorSecondaryText"
+        android:layout_alignParentRight="true"
+        android:textSize="16dp"
+        android:text="Palets: 1" />
+
+    <TextView
         android:id="@+id/item_download_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

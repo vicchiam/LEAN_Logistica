@@ -85,6 +85,7 @@ class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filte
         private val relativeLayout: RelativeLayout = view.findViewById(R.id.item_download)
 
         private val textProvider: TextView =  view.findViewById(R.id.item_download_provider)
+        private val textPallet: TextView = view.findViewById(R.id.item_download_pallets)
         private val textStart: TextView =  view.findViewById(R.id.item_download_start)
         private val textEnd: TextView =  view.findViewById(R.id.item_download_end)
         private val textOperators: TextView =  view.findViewById(R.id.item_download_operators)
@@ -92,6 +93,8 @@ class DownloadAdapter: RecyclerView.Adapter<DownloadAdapter.ViewHolder>(), Filte
         fun bind(download: Download, downloadFragment: DownloadFragment){
             val providerText = "${download.provider} - ${download.name}"
             textProvider.text = providerText
+            val palletsText = "Palets: ${download.pallets}"
+            textPallet.text = palletsText
             textStart.text = Utils.dateToString(download.start!!,"dd/MM/yyyy HH:mm")
             if(download.end!=null)
                 textEnd.text = Utils.dateToString(download.end!!, "dd/MM/yyyy HH:mm")

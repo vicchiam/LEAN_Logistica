@@ -32,7 +32,7 @@ data class Upload(
 
     fun dockInUse(list: List<Upload>): Boolean{
         list.forEach{
-            if(it.dock==this.dock)
+            if(it.end==null && it.dock==this.dock)
                 return true
         }
         return false

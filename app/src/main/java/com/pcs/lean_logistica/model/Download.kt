@@ -12,14 +12,15 @@ data class Download(
     @SerializedName("operators") var operators: Int = 1,
     @SerializedName("type") var type: Int = 1,
     @SerializedName("start") var start: Date? = null,
-    @SerializedName("end") var end: Date? = null
+    @SerializedName("end") var end: Date? = null,
+    @SerializedName("pallets") var pallets: Int = 0
 ){
 
     val pending: Boolean
         get() = (start!=null && end==null)
 
     fun isValid(): Boolean{
-        return (name.isNotEmpty() && operators>0)
+        return (name.isNotEmpty() && operators>0 && pallets>0)
     }
 
     fun getSearchCriteria(): String{

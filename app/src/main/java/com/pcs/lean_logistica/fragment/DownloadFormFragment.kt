@@ -46,8 +46,11 @@ class DownloadFormFragment: Fragment() {
         val download: Download = mainActivity.download
 
         val readOnly: Boolean = (download.start!=null)
+        val readOnlyEnd: Boolean = (download.end!=null)
+
         makeEditTextProviders(view, download.provider, download.name, readOnly)
         makeEditTextOperator(view, download.operators, readOnly)
+        makeEditTextPallets(view, download.pallets, readOnlyEnd)
         makeSwitch(view, download.type, readOnly)
         makeButtons(view, download.start, download.end)
 
@@ -116,6 +119,26 @@ class DownloadFormFragment: Fragment() {
         })
     }
 
+    private fun makeEditTextPallets(view: View, num: Int, readOnly: Boolean){
+        val editText: EditText = view.findViewById(R.id.edit_num_pallets)
+        editText.isEnabled=!readOnly
+
+        val textNum= if(num>0) num.toString() else ""
+
+        editText.setText(textNum)
+        editText.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.toString().isNotEmpty())
+                    mainActivity.download.pallets = s.toString().toInt()
+            }
+        })
+    }
+
     private fun makeSwitch(view: View, type: Int = 1, readOnly: Boolean){
         val nameType=if(type==1)"SI" else "NO"
 
@@ -170,6 +193,7 @@ class DownloadFormFragment: Fragment() {
         params["provider"]=mainActivity.download.provider.toString()
         params["name"]=mainActivity.download.name
         params["operators"]=mainActivity.download.operators.toString()
+        params["pallets"]=mainActivity.download.pallets.toString()
         params["type"]=mainActivity.download.type.toString()
         params["start"]=Utils.dateToString(mainActivity.download.start!!, "yyyy-MM-dd HH:mm:ss")
         if(mainActivity.download.end!=null)
@@ -234,7 +258,7 @@ class DownloadFormFragment: Fragment() {
             Router.get(
                 context = context!!,
                 url = url,
-                params = "action=end-download&id=${mainActivity.download.id}",
+                params = "action=end-download&id=${mainActivity.download.id}&pallets=${mainActivity.download.pallets}",
                 responseListener = { response ->
                     if (context != null){
                         if (response=="ok")
